@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGazer Demo</title>
+    <script src="webgazer.js"></script>
+    <style>
+        /* Add some basic styling to the gaze dot */
+        #webgazerGazeDot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebGazer Demo</h1>
+
+    <!-- Create a div to represent the gaze dot -->
+    <div id="webgazerGazeDot"></div>
+
+    <!-- Include a video element for the webcam feed (optional) -->
+    <video id="webgazerVideo" autoplay></video>
+
+    <script>
+        // Initialize WebGazer.js
+        webgazer
+            .setGazeListener(function (data, elapsedTime) {
+                if (data == null) return;
+                const x = data.x; // Horizontal position of the gaze dot
+                const y = data.y; // Vertical position of the gaze dot
+
+                // Update the position of the gaze dot
+                const gazeDot = document.getElementById('webgazerGazeDot');
+                gazeDot.style.left = x + 'px';
+                gazeDot.style.top = y + 'px';
+            })
+            .begin();
+
+        // Set up the webcam video (optional)
+        const video = document.getElementById('webgazerVideo');
+        webgazer.setVideoViewer(video);
+    </script>
+</body>
+</html>
+
