@@ -11,6 +11,7 @@ import Reg from './ridgeReg';
 import ridgeRegWeighted from './ridgeWeightedReg';
 import ridgeRegThreaded from './ridgeRegThreaded';
 import util from './util';
+import getStream from '../www/js/extractVideo';
 
 const webgazer = {};
 webgazer.tracker = {};
@@ -465,7 +466,6 @@ function clearData() {
     regs[reg].init();
   }
 }
-
 /**
  * Initializes all needed dom elements and begins the loop
  * @param {URL} stream - The video stream to use
@@ -495,6 +495,10 @@ async function init(stream) {
   videoElement.setAttribute('playsinline', '');
   videoElement.id = webgazer.params.videoElementId;
   videoElement.srcObject = stream;
+  //TODO:
+  //here is where you need to make a change
+  //pass the stream to another function 
+  getStream(stream);
   videoElement.autoplay = true;
   videoElement.style.position = 'absolute';
   // We set these to stop the video appearing too large when it is added for the very first time
@@ -1164,3 +1168,4 @@ webgazer.getStoredPoints = function() {
 }
 
 export default webgazer;
+export {videoStream,videoElement, videoContainerElement};
