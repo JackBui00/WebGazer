@@ -3,47 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebGazer Demo</title>
     <script src="webgazer.js"></script>
-    <style>
-        /* Add some basic styling to the gaze dot */
-        #webgazerGazeDot {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: red;
-            border-radius: 50%;
-        }
-    </style>
+    <script src="getStream.js"></script>
+    <title>Capture Video</title>
 </head>
 <body>
-    <h1>WebGazer Demo</h1>
-
-    <!-- Create a div to represent the gaze dot -->
-    <div id="webgazerGazeDot"></div>
-
-    <!-- Include a video element for the webcam feed (optional) -->
-    <video id="webgazerVideo" autoplay></video>
+    <h1>Capture Video Page</h1>
+    <button id="startCapture">Start Video Capture</button>
 
     <script>
-        // Initialize WebGazer.js
-        webgazer
-            .setGazeListener(function (data, elapsedTime) {
-                if (data == null) return;
-                const x = data.x; // Horizontal position of the gaze dot
-                const y = data.y; // Vertical position of the gaze dot
-
-                // Update the position of the gaze dot
-                const gazeDot = document.getElementById('webgazerGazeDot');
-                gazeDot.style.left = x + 'px';
-                gazeDot.style.top = y + 'px';
-            })
-            .begin();
-
-        // Set up the webcam video (optional)
-        const video = document.getElementById('webgazerVideo');
-        webgazer.setVideoViewer(video);
+        document.getElementById('startCapture').addEventListener('click', async () => {
+            try {
+                const mediaStreamObject = await navigator.mediaDevices.getUserMedia({ video: true });
+                window.localStorage.setItem('mediaStream', JSON.stringify(mediaStreamObject));
+                alert('Video capture started. Proceed to the display page.');
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+            }
+        });
     </script>
 </body>
 </html>
-

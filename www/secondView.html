@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="webgazer.js"></script>
+    <script src="getStream.js"></script>
+    <title>Display Video</title>
+</head>
+<body>
+    <h1>Display Video Page</h1>
+    <button id="displayVideo">Display Captured Video</button>
+    
+    <script>
+        document.getElementById('displayVideo').addEventListener('click', () => {
+            const storedMediaStream = JSON.parse(window.localStorage.getItem('mediaStream'));
+
+            if (storedMediaStream) {
+                const video = document.createElement('video');
+                video.srcObject = storedMediaStream;
+                document.body.appendChild(video);
+                video.play();
+            } else {
+                alert('No captured video found. Please capture video first on the other page.');
+            }
+        });
+    </script>
+</body>
+</html>
