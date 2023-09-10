@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGazer Receiver</title>
+</head>
+<body>
+    <h1>test3.HTML</h1>
+
+    <video id="receivedVideo" autoplay></video>
+
+    <script>
+        // Listen for the message sent from test2.HTML
+        window.addEventListener('message', (event) => {
+            // Check if the event data contains the srcObjectURL
+            if (event.data.srcObjectURL) {
+                const receivedVideoElement = document.getElementById('receivedVideo');
+                // Set the received srcObjectURL as the source for the video element
+                receivedVideoElement.src = event.data.srcObjectURL;
+            }
+        });
+    </script>
+</body>
+</html>

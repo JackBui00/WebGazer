@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGazer Demo</title>
+</head>
+<body>
+    <h1>WebGazer.js Demo</h1>
+    
+    <p>This is a simple demo of WebGazer.js.</p>
+
+    <!-- Include WebGazer.js from the same directory -->
+    <script src="webgazer.js"></script>
+
+    <video id="videoElement" autoplay></video>
+
+    <script>
+        // Initialize WebGazer
+        webgazer.setGazeListener(function(data, elapsedTime) {
+            if (data == null) {
+                return;
+            }
+            // Log gaze data to console
+            console.log(data);
+
+            // Get the video element
+            const videoElement = document.getElementById('videoElement');
+
+            // Check if WebGazer has a MediaStream
+            const mediaStream = webgazer.getVideoStream();
+
+            // Check if the video element already has a source (MediaStream)
+            if (!videoElement.srcObject && mediaStream) {
+                // Set the MediaStream as the source for the video element
+                videoElement.srcObject = mediaStream;
+                
+            }
+        }).begin();
+    </script>
+</body>
+</html>

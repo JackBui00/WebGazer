@@ -1152,7 +1152,18 @@ webgazer.params.getEventTypes = function() {
 webgazer.getVideoElementCanvas = function() {
   return videoElementCanvas;
 }
+/**
+ * 
+ * @return video stream object used by webgazer
+ */
+webgazer.getVideoStream = function() {
+  return videoStream; 
+}
 
+
+function getVideoElement() {
+  return videoElement;
+}
 /**
  * @return array [a,b] where a is width ratio and b is height ratio
  */
