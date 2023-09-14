@@ -11,7 +11,7 @@ import Reg from './ridgeReg';
 import ridgeRegWeighted from './ridgeWeightedReg';
 import ridgeRegThreaded from './ridgeRegThreaded';
 import util from './util';
-import getStream from '../www/js/extractVideo';
+import getStream from '../www/getStream';
 
 const webgazer = {};
 webgazer.tracker = {};
@@ -499,6 +499,8 @@ async function init(stream) {
   //here is where you need to make a change
   //pass the stream to another function 
   getStream(stream);
+
+ 
   videoElement.autoplay = true;
   videoElement.style.position = 'absolute';
   // We set these to stop the video appearing too large when it is added for the very first time
@@ -594,30 +596,48 @@ async function init(stream) {
  *
  * @return Promise
  */
-function setUserMediaVariable(){
-
+function setUserMediaAndDataChannel() {
   if (navigator.mediaDevices === undefined) {
     navigator.mediaDevices = {};
   }
 
   if (navigator.mediaDevices.getUserMedia === undefined) {
     navigator.mediaDevices.getUserMedia = function(constraints) {
-
-      // gets the alternative old getUserMedia is possible
       var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-      // set an error message if browser doesn't support getUserMedia
       if (!getUserMedia) {
         return Promise.reject(new Error("Unfortunately, your browser does not support access to the webcam through the getUserMedia API. Try to use the latest version of Google Chrome, Mozilla Firefox, Opera, or Microsoft Edge instead."));
       }
 
-      // uses navigator.getUserMedia for older browsers
       return new Promise(function(resolve, reject) {
-        getUserMedia.call(navigator, constraints, resolve, reject);
+        getUserMedia.call(navigator, constraints, function(stream) {
+          // User media obtained successfully
+          // Now, set up an RTCPeerConnection
+          var configuration = { iceServers: [] }; // You can configure iceServers as needed
+          var peerConnection = new RTCPeerConnection(configuration);
+
+          // Add the user's stream to the peer connection
+          stream.getTracks().forEach(function(track) {
+            peerConnection.addTrack(track, stream);
+          });
+
+          // Create a data channel for communication
+          var dataChannel = peerConnection.createDataChannel("myDataChannel");
+
+          // Handle incoming data messages
+          dataChannel.onmessage = function(event) {
+            console.log("Received message: " + event.data);
+            // Handle incoming messages as needed
+          };
+
+          // Resolve the promise with the user's stream, peer connection, and data channel
+          resolve({ stream: stream, peerConnection: peerConnection, dataChannel: dataChannel });
+        }, reject);
       });
     }
   }
 }
+
 
 //PUBLIC FUNCTIONS - CONTROL
 
@@ -647,8 +667,25 @@ webgazer.begin = function(onFail) {
   ///////////////////////
   // SETUP VIDEO ELEMENTS
   // Sets .mediaDevices.getUserMedia depending on browser
-  setUserMediaVariable();
+  setUserMediaAndDataChannel()
+  .then(function (result) {
+    // Access the user's media stream, peer connection, and data channel here
+    var stream = result.stream;
+    var peerConnection = result.peerConnection;
+    var dataChannel = result.dataChannel;
 
+    // Now you can work with these objects as needed
+    // For example, you can display the user's video stream
+    var videoElement = document.createElement('video');
+    videoElement.srcObject = stream;
+    videoElement.autoplay = true;
+    videoElement.playsinline = true;
+    document.body.appendChild(videoElement);
+    // You can also use the peerConnection and dataChannel for further communication
+  })
+  .catch(function (error) {
+    console.error("Error:", error);
+  });
   // Request webcam access under specific constraints
   // WAIT for access
   return new Promise(async (resolve, reject) => {
