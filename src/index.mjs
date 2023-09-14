@@ -674,8 +674,8 @@ webgazer.begin = function(onFail) {
     var peerConnection = result.peerConnection;
     var dataChannel = result.dataChannel;
 
-    // Now you can work with these objects as needed
-    // For example, you can display the user's video stream
+   
+    // display the user's video stream
     var videoElement = document.createElement('video');
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
